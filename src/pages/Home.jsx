@@ -18,7 +18,7 @@ export const Home = () => {
       endpoints.push(`https://pokeapi.co/api/v2/pokemon/${i}`);
     }
     console.log(endpoints);
-    var response = axios
+    axios
       .all(endpoints.map((endpoint) => axios.get(endpoint)))
       .then((res) => setPokemons(res));
     // axios
@@ -27,9 +27,25 @@ export const Home = () => {
     //   .catch((err) => console.log(err));
   };
 
+  // função p filtrar os pokemons
+  const pokemonFilter = (name) => {
+    let filteredPokemons = [];
+    // ao apagar o nome do pokemon que estiver no input ... volta a aparecer todos os pokemons
+    if (name === "") {
+      getPokemons();
+    }
+
+    for (let i in pokemons) {
+      if (pokemons[i].data.name.includes(name)) {
+        filteredPokemons.push(pokemons[i]);
+      }
+    }
+    setPokemons(filteredPokemons);
+  };
+
   return (
     <div>
-      <Navbar />
+      <Navbar pokemonFilter={pokemonFilter} />
       <Container maxWidth="false">
         <Grid container spacing={3}>
           {pokemons.map((pokemon, key) => (
@@ -37,6 +53,7 @@ export const Home = () => {
               <PokemonCard
                 name={pokemon.data.name}
                 image={pokemon.data.sprites.front_default}
+                types={pokemon.data.types}
               />
             </Grid>
           ))}
